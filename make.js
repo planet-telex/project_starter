@@ -4,7 +4,10 @@ var folderName = process.argv[2];
 
 var config = {
   dest: '~/Sites/'+folderName,
-
+  //dependencies: ['jquery', 'backbone', 'gsap'],
+  dependencies: ['jquery'],
+  devDependencies: []
+  //devDependencies: ['browserify', 'gulp', 'gulp-clean-css', 'gulp-concat', 'gulp-plumber', 'watchify']
 };
 
 
@@ -161,10 +164,34 @@ fs.exists('./'+folderName, function(exists){
 
       exec('cp gen.js '+folderName+'/gen.js');
 
-      //exec('npm --prefix ./'+folderName+'/ install jquery --save');
-      //exec('npm --prefix ./'+folderName+'/ install watchify --save-dev');
+      var depLen = config.dependencies.length;
+      if(depLen > 0) {
+        var addDependencies = 'npm --prefix ./'+folderName+'/ install ';
+        for(var i = 0; i < config.dependencies.length; i++) {
+          addDependencies += ' '+config.dependencies[i];
+        } 
+        addDependencies += ' --save';
+        console.log(addDependencies);
+        exec(addDependencies);
+      }
 
-      console.log('project setup; installing dependencies...');
+      var devDepLen = config.devDependencies.length;
+      if(devDepLen > 0) {
+        addDevDependencies = 'npm --prefix ./'+folderName+'/ install ';
+        for(var i = 0; i < devDepLen; i++) {
+          addDevDependencies += config.devDependencies[i];
+        }
+        addDevDependencies += ' --save-dev';
+        console.log(addDevDependencies);
+        exec(addDevDependencies);
+      }
+  
+
+      if (depLen > 0 || devDepLen > 0) {
+        console.log('project setup; installing dependencies...');
+      } else {
+        console.log('project setup with no dependencies');
+      }
 
      
     }
